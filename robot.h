@@ -31,13 +31,12 @@ public:
 	int getPosX() const {
         return posX;
     }
-    bool isAlive() {
-        return Lives > 0;
-    }
     int getPosY() const {
         return posY;
     }
-
+    bool isAlive() {
+        return Lives > 0;
+    }
 	void setPosX(int x) {
         posX = x;
     }
@@ -52,12 +51,15 @@ public:
     int getKill() const {
         return Kills;
     }
-	
+	virtual string getName() const {
+        return Name;
+    }
 		
 };
 
 class MovingRobot: public Robot{
 	public:
+        string getName() const override {return Name;}
 		MovingRobot(string name, string x, string y, int kills): Robot(name, x, y, kills){
 			int mapX = 30; // Define a variable to store the maximum x-coordinate of the map
 			int mapY = 30; // Define a variable to store the maximum y-coordinate of the map
