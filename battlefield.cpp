@@ -72,6 +72,10 @@ void Battlefield::update() {
         if (MovingRobot* mr = dynamic_cast<MovingRobot*>(robots[i])) {
             int newX = rand() % 3 - 1; // Random movement in X direction
             int newY = rand() % 3 - 1; // Random movement in Y direction
+
+            // Ensure new position is within the boundaries of the map
+            newX = max(0, std::min(newX, mapX - 1));
+            newY = max(0, std::min(newY, mapX - 1));
             mr->moving(to_string(newX), to_string(newY));
         }
     }
