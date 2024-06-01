@@ -53,12 +53,12 @@ public:
 class MovingRobot: public Robot{
 	public:
 		MovingRobot(string name, string x, string y, int kills): Robot(name, x, y, kills){
-			int mapX = 10;
-			int mapY = 10;
+			int mapX = 10;// Define a variable to store the maximum x-coordinate of the map
+			int mapY = 10;/ Define a variable to store the maximum y-coordinate of the map
 			if (x == "random" && y== "random"){// if input robot postion in random then it will be place randomly
-				srand(time(0)); // Seed the random number generator
-				setPosX(rand() % mapX);
-            	setPosY(rand() % mapY);
+				srand(time(0)); // Seed the random number generator with the current time
+				setPosX(rand() % mapX); // Generate a random x-coordinate within the mapX range
+            	setPosY(rand() % mapY); // Generate a random y-coordinate within the mapX range
 			}
 			else if (stoi(x) <= mapX && stoi(y)<= mapY){//it will input the robot to the position
 				int posX = stoi(x);
