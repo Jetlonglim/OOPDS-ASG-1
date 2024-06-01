@@ -37,6 +37,9 @@ public:
     bool isAlive() {
         return Lives > 0;
     }
+    void setAlive(bool alive) {
+            Lives = alive ? 3 : 0;
+        }
 	void setPosX(int x) {
         posX = x;
     }
