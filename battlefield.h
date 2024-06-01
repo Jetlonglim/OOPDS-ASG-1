@@ -7,6 +7,8 @@
 #include <fstream>
 #include "robot.h"
 
+using namespace std;
+
 const int mapX = 30;
 const int mapY = 30;
 const int MAX_ROBOTS = 100;
