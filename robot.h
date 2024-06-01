@@ -27,10 +27,13 @@ public:
 		posY = stoi(y);
 		Kills = kills;
 	}
+    virtual ~Robot() {}
 	int getPosX() const {
         return posX;
     }
-
+    bool isAlive() {
+        return Lives > 0;
+    }
     int getPosY() const {
         return posY;
     }
@@ -46,6 +49,9 @@ public:
 		Kills++;
 		cout << Name << " has killed an enemy. Total kills: " << Kills << endl;
 	}
+    int getKill() const {
+        return Kills;
+    }
 	
 		
 };
@@ -53,8 +59,8 @@ public:
 class MovingRobot: public Robot{
 	public:
 		MovingRobot(string name, string x, string y, int kills): Robot(name, x, y, kills){
-			int mapX = 10;// Define a variable to store the maximum x-coordinate of the map
-			int mapY = 10;/ Define a variable to store the maximum y-coordinate of the map
+			int mapX = 30; // Define a variable to store the maximum x-coordinate of the map
+			int mapY = 30; // Define a variable to store the maximum y-coordinate of the map
 			if (x == "random" && y== "random"){// if input robot postion in random then it will be place randomly
 				srand(time(0)); // Seed the random number generator with the current time
 				setPosX(rand() % mapX); // Generate a random x-coordinate within the mapX range
@@ -76,17 +82,17 @@ class MovingRobot: public Robot{
         int posY = getPosY();
 
         if (newX > 0) { // move right
-            posX += 1;
+            posX ++;
         } else if (newX < 0) { // move left
-            posX -= 1;
+            posX --;
         } else if (newX == 0) { // move left
             posX;
         }
 
         if (newY > 0) { // move upward
-            posY += 1;
+            posY ++;
         } else if (newY < 0) { // move downward
-            posY -= 1;
+            posY --;
         } else if (newY == 0) { // move downward
             posY;
         }
