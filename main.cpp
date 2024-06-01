@@ -84,13 +84,13 @@ int main() {
     int turn = 0;
 
     while (running) {
-        cout << "Turn " << turn + 1 << endl;
+        cout << "Round " << turn + 1 << endl;
         printBattlefield(battlefield, robots, numRobots);
 
         // Input and move the first MovingRobot found
         for (int i = 0; i < numRobots; ++i) {
             if (MovingRobot* movingRobot = dynamic_cast<MovingRobot*>(robots[i])) {
-                cout << "Enter movement for " << movingRobot->getName() << " (posX posY): ";
+                cout << "Enter movement for " << movingRobot->getName() << " (posX(enter 1 to move right, enter-1 to move left) posY(enter 1 to move up, enter -1 to move down)): ";
                 cin >> posX >> posY;
                 if (posX >= -1 && posX <= 1 && posY >= -1 && posY <= 1) {
                     movingRobot->moving(to_string(posX), to_string(posY));
