@@ -28,7 +28,7 @@ void Battlefield::simulateWar() {
 
     for (int turn = 0; turn < 10; ++turn) { // Example: Simulate 10 turns
         cout << "Turn " << turn + 1 << endl;
-        logFile << "Turn " << turn + 1 << endl;
+        logFile << "Turn " << turn + 1 ;
 
         update();
         display(logFile);
@@ -39,9 +39,11 @@ void Battlefield::simulateWar() {
         // Log the battlefield status
         logFile << "Displaying battlefield:" << endl;
         for (int i = 0; i < numRobots; ++i) {
-        logFile << "Robot " << i + 1 << " - Position: (" 
-                << robots[i]->getPosX() << ", " 
-                << robots[i]->getPosY() << ")" << endl;
+        if (robots[i]->isAlive()) { // Check if the robot is alive
+                logFile << "Robot " << i + 1 << " - Position: (" 
+                        << robots[i]->getPosX() << ", " 
+                        << robots[i]->getPosY() << ")" << endl;
+            }
         }       
     }
 
@@ -82,14 +84,11 @@ void Battlefield::update() {
 }
 void Battlefield::display(ofstream& logFile) {
     cout << "Displaying battlefield:" << endl;
-    logFile << "Displaying battlefield:" << endl;
     for (int i = 0; i < numRobots; ++i) {
         cout << "Robot " << i + 1 << " - Position: (" 
              << robots[i]->getPosX() << ", " 
              << robots[i]->getPosY() << ")" << endl;
-        logFile << "Robot " << i + 1 << " - Position: (" 
-                << robots[i]->getPosX() << ", " 
-                << robots[i]->getPosY() << ")" << endl;
+        
     }
 }
 
