@@ -1,21 +1,28 @@
 #ifndef BATTLEFIELD_H
 #define BATTLEFIELD_H
+#include <cstdlib>
+#include <iostream>
+#include <ctime>
+#include <string>
+#include <fstream>
+#include "robot.h"
 
-const int BATTLEFIELD_ROWS = 30;
-const int BATTLEFIELD_COLUMNS = 80;
+const int mapX = 30;
+const int mapY = 30;
 const int MAX_ROBOTS = 100;
 
 class Robot;
 
 class Battlefield {
+private:
+    Robot* robots[MAX_ROBOTS];
+    int numRobots;
 public:
     Battlefield();
     void addRobot(Robot* robot);
     void simulateWar();
-
-private:
-    Robot* robots[MAX_ROBOTS];
-    int numRobots;
+    void update();
+    void display(std::ofstream& logFile);
 };
 
 #endif // BATTLEFIELD_H
