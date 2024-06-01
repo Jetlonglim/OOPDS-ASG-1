@@ -19,6 +19,7 @@ class Battlefield {
 private:
     Robot* robots[MAX_ROBOTS];
     int numRobots;
+    char battlefieldMap[mapY][mapX];
 public:
     Battlefield();
     void addRobot(Robot* robot);
