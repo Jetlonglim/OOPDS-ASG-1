@@ -9,8 +9,8 @@
 
 using namespace std;
 
-const int mapX = 30;
-const int mapY = 30;
+const int mapX = 10;
+const int mapY = 10;
 const int MAX_ROBOTS = 100;
 
 class Robot;
@@ -20,12 +20,15 @@ private:
     Robot* robots[MAX_ROBOTS];
     int numRobots;
     char battlefieldMap[mapY][mapX];
+    void initializeBattlefield();
+    void updateBattlefield();
+    void printBattlefield(Robot* robots[], int numRobots, int mapX, int mapY);
+    void clearDeadRobots();
 public:
     Battlefield();
     void addRobot(Robot* robot);
-    void simulateWar();
-    void update();
-    void display(std::ofstream& logFile);
+    void simulateWar(Robot* robots[], int numRobots, int mapX, int mapY);
+    void display(ofstream& logFile);
 };
 
 #endif // BATTLEFIELD_H
