@@ -1,5 +1,5 @@
 #include "battlefield.h"
-#include "robot.h"
+#include "typeRobot.h"
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
