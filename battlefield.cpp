@@ -1,97 +1,125 @@
 #include "battlefield.h"
-#include "typeRobot.h"
+#include "robot.h"
+#include "linkedlist.h"
+#include <iostream>
 #include <cstdlib>
 #include <ctime>
-#include <iostream>
-#include <fstream>
+#include <string>
 
 using namespace std;
 
 Battlefield::Battlefield() {
     srand(time(0));
+    initializeBattlefield();
 }
 
-void Battlefield::simulateWar(Robot* robots[], int numRobots, int mapX, int mapY) {
-    // Simulate actions for all robots
-    for (int i = 0; i < numRobots; ++i) {
-        robots[i]->move(robots, mapX, mapY);
-
-        if (RoboCop* robocop = dynamic_cast<RoboCop*>(robots[i])) {
-            robocop->look(robots, mapX, mapY);
-            robocop->fire(robots, mapX, mapY);
-            if (robocop->getKill() >= 3) {
-                TerminatorRoboCop* upgradedRobot = new TerminatorRoboCop(robocop->getName(), "random", "random", 0);
-                upgradedRobot->setAlive(true);
-                robots[i] = upgradedRobot;
-            }
-        } else if (Terminator* terminator = dynamic_cast<Terminator*>(robots[i])) {
-            terminator->look(robots, mapX, mapY);
-            terminator->step(robots, mapX, mapY);
-            if (terminator->getKill() >= 3) {
-                TerminatorRoboCop* upgradedRobot = new TerminatorRoboCop(terminator->getName(), "random", "random", 0);
-                upgradedRobot->setAlive(true);
-                robots[i] = upgradedRobot;
-            }
-        } else if (TerminatorRoboCop* termRoboCop = dynamic_cast<TerminatorRoboCop*>(robots[i])) {
-            termRoboCop->look(robots, mapX, mapY);
-            termRoboCop->fire(robots, mapX, mapY);
-            termRoboCop->step(robots, mapX, mapY);
-            if (termRoboCop->getKill() >= 3) {
-                UltimateRobot* upgradedRobot = new UltimateRobot(termRoboCop->getName(), "random", "random", 0);
-                upgradedRobot->setAlive(true);
-                robots[i] = upgradedRobot;
-            }
-        } else if (BlueThunder* blueThunder = dynamic_cast<BlueThunder*>(robots[i])) {
-            blueThunder->fire(robots, mapX, mapY);
-            if (blueThunder->getKill() >= 3) {
-                MadBot* upgradedRobot = new MadBot(blueThunder->getName(), "random", "random", 0);
-                upgradedRobot->setAlive(true);
-                robots[i] = upgradedRobot;
-            }
-        } else if (MadBot* madBot = dynamic_cast<MadBot*>(robots[i])) {
-            madBot->fire(robots, mapX, mapY);
-            if (madBot->getKill() >= 3) {
-                UltimateRobot* upgradedRobot = new UltimateRobot(madBot->getName(), "random", "random", 0);
-                upgradedRobot->setAlive(true);
-                robots[i] = upgradedRobot;
-            }
-        } else if (RoboTank* roboTank = dynamic_cast<RoboTank*>(robots[i])) {
-            roboTank->fire(robots, mapX, mapY);
-            if (roboTank->getKill() >= 3) {
-                UltimateRobot* upgradedRobot = new UltimateRobot(roboTank->getName(), "random", "random", 0);
-                upgradedRobot->setAlive(true);
-                robots[i] = upgradedRobot;
-            }
-        } else if (UltimateRobot* ultimateRobot = dynamic_cast<UltimateRobot*>(robots[i])) {
-            ultimateRobot->move(robots, mapX, mapY);
-            ultimateRobot->fire(robots, mapX, mapY);
-            ultimateRobot->step(robots, mapX, mapY);
-        }
-    }
-}
-
-void Battlefield::printBattlefield(Robot* robots[], int numRobots, int mapX, int mapY) {
-    char battlefieldMap[mapY][mapX];
-
-    // Initialize the battlefield with '.'
+void Battlefield::initializeBattlefield() {
     for (int i = 0; i < mapY; ++i) {
         for (int j = 0; j < mapX; ++j) {
             battlefieldMap[i][j] = '.';
         }
     }
+}
 
-    // Place the robots on the battlefield
-    for (int i = 0; i < numRobots; ++i) {
-        if (robots[i]->isAlive()) {
-            battlefieldMap[robots[i]->getPosY()][robots[i]->getPosX()] = 'R';
-        }
+void Battlefield::addRobot(Robot* robot) {
+    if (robots.getSize() < MAX_ROBOTS) {
+        robots.insert(robot);
+    } else {
+        cout << "Maximum number of robots reached." << endl;
     }
+}
 
-    // Print the battlefield
-    for (int i = 0; i < mapY; ++i) {
-        for (int j = 0; j < mapX; ++j) {
+void Battlefield::clearDeadRobots() {
+    Node* current = robots.getHead();
+    Node* prev = nullptr;
+    while (current != nullptr) {
+        Robot* robot = current->getData();
+        if (!robot->isAlive()) {
+            if (respawnCount[robot] < MAX_RESPAWNS) {
+                respawnQueue.push(robot);
+                respawnCount[robot]++;
+            } else {
+                delete robot;
+                if (prev) {
+                    prev->setNext(current->getNext());
+                } else {
+                    robots.setHead(current->getNext());
+                }
+                Node* toDelete = current;
+                current = current->getNext();                
+                delete current;
+            }
+        } else {
+            prev = current;
+            current = current->getNext();
+        }        
+    }
+}
+
+void Battlefield::removeRobot(Robot* robot) {
+    Node* current = robots.getHead();
+    Node* prev = nullptr;
+    while (current != nullptr) {
+        if (current->robot == robot) {
+            if (prev) {
+                prev->next = current->next;
+            } else {
+                robots.setHead(current->next);
+            }
+            delete current->robot;
+            delete current;
+            return;
+        }
+        prev = current;
+        current = current->next;
+    }
+}
+
+void Battlefield::simulateWar() {
+    Node* current = robots.getHead();
+    while (current != nullptr) {
+        Robot* currentRobot = current->getData();
+        if (currentRobot->isAlive()) {
+            Node* opponent = robots.getHead();
+            while (opponent != nullptr) {
+                Robot* opponentRobot = opponent->getData();
+                if (opponentRobot->isAlive() && currentRobot != opponentRobot) {
+                    currentRobot->interact(opponentRobot, mapX, mapY);
+                }
+                opponent = opponent->getNext();
+            }
+        }
+        current = current->getNext();
+    }
+    clearDeadRobots();
+}
+
+void Battlefield::respawnRobots() {
+    while (!respawnQueue.empty()) {
+        Robot* robot = respawnQueue.front();
+        respawnQueue.pop();
+        robot->resetPosition(mapX, mapY);  // Reset position and re-enter the battlefield
+        robot->setAlive(true);  // Make sure the robot is set to alive
+        robots.insert(robot);  // Insert respawned robot into the linked list
+    }
+}
+
+void Battlefield::printBattlefield() {
+    cout << "Current Battlefield State:" << endl;
+    for (int i = 0; i < mapY; i++) {
+        for (int j = 0; j < mapX; j++) {
             cout << battlefieldMap[i][j] << ' ';
         }
         cout << endl;
+    }
+}
+
+Battlefield::~Battlefield() {
+    Node* current = robots.getHead();
+    while (current != nullptr) {
+        Node* next = current->getNext();
+        delete current->getData();  // Delete the Robot object
+        delete current;             // Delete the Node
+        current = next;
     }
 }
