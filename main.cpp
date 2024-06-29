@@ -45,21 +45,20 @@ void printBattlefield(Battlefield &battlefield) {
     }
 }
 
-
 Robot* createRobot(const string& type, const string& name, const string& x, const string& y, int kills) {
-    int posX = stoi(x);
-    int posY = stoi(y);
+    int posX = x == "random" ? rand() % MAP_X : stoi(x);
+    int posY = y == "random" ? rand() % MAP_Y : stoi(y);
     
     if (type == "R") {
         return new RoboCop(name, posX, posY, kills);
     } else if (type == "M") {
         return new MadBot(name, posX, posY, kills);
+    } else if (type == "T") {
+        return new Terminator(name, posX, posY, kills);
     } else if (type == "B") {
         return new BlueThunder(name, posX, posY, kills);
     } else if (type == "K") {
         return new RoboTank(name, posX, posY, kills);
-    } else if (type == "T") {
-        return new Terminator(name, posX, posY, kills);
     } else {
         cerr << "Unknown robot type: " << type << endl;
         exit(1);
@@ -81,7 +80,7 @@ int main() {
 
     for (int i = 0; i < numRobots; ++i) {
         string type, name, x, y;
-        cout << "Enter the type of robot (RoboCop[R], MadBot,[M] BlueThunder[B], RoboTank[K], Terminator[T]): ";
+        cout << "Enter the type of robot (RoboCop[R], MadBot[M], Terminator[T], BlueThunder[B], RoboTank[T]): ";
         cin >> type;
         cout << "Enter the name of the robot: ";
         cin >> name;
@@ -91,8 +90,9 @@ int main() {
         cin >> y;
 
         Robot* robot = createRobot(type, name, x, y, 0);
-        battlefield.addRobot(robot); 
+        battlefield.addRobot(robot);
     }
+    // Simulation loop
     bool running = true;
     int turn = 0;
 
@@ -103,28 +103,30 @@ int main() {
         // Simulate actions for all robots
         battlefield.simulateWar();
 
-        // Print robot statuses and log them
+        // Print robot statuses
         Node* current = battlefield.getRobots().getHead();
         while (current != nullptr) {
             Robot* robot = current->getData();
             cout << robot->getName() << " position: (" << robot->getPosX() << ", " << robot->getPosY() << ")" << endl;
             cout << robot->getName() << " kills: " << robot->getKill() << endl;
-
-            // Log robot details to file
-            logFile << robot->getType() << " " << robot->getName() << " ("
-                    << robot->getPosX() << ", " << robot->getPosY() << ")" << endl;
-
             current = current->getNext();
         }
 
-        // Log other details
         logFile << "M by N: " << MAP_X << " " << MAP_Y << endl;
         logFile << "steps: " << turn + 1 << endl; // Steps start from 1
         logFile << "robots: " << numRobots << endl;
 
-        // Prompt user to continue or stop
+        current = battlefield.getRobots().getHead();
+        while (current != nullptr) {
+            Robot* robot = current->getData();
+            logFile << robot->getType() << " " << robot->getName() << " ("
+                 << robot->getPosX() << ", " << robot->getPosY() << ")" << endl;
+            current = current->getNext();
+        }
+
         cout << "Do you want to continue to the next turn? (Press Enter to continue, type 'n' to stop): ";
         string choice;
+        cin.ignore();
         getline(cin, choice);
 
         if (choice == "n") {
@@ -134,7 +136,6 @@ int main() {
         cout << endl;
         ++turn; // Increment the turn counter
     }
-
 
     return 0;
 }
