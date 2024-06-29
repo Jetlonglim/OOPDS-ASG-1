@@ -273,6 +273,9 @@ public:
 class BlueThunder : public ShootingRobot {
 public:
     using ShootingRobot::ShootingRobot;
+    // BlueThunder(const string& name, int x, int y, int kills) 
+    //     : Robot(name, x, y, kills), ShootingRobot(name, x, y, kills), fireSequenceIndex(0) {}
+
 
     void move(Robot* robots[], int mapX, int mapY) override {
         // MadBot does not move, so we provide an empty implementation.
@@ -404,6 +407,8 @@ public:
 class RoboTank : public ShootingRobot{
 public:
     using ShootingRobot::ShootingRobot;
+    // RoboTank(const string& name, int x, int y, int kills) 
+    //     : Robot(name, x, y, kills), ShootingRobot(name, x, y, kills) {}
     
     void move(Robot* robots[], int mapX, int mapY) override {
         // MadBot does not move, so we provide an empty implementation.
